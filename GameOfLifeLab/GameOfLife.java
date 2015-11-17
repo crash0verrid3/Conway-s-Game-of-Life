@@ -12,8 +12,8 @@ import javax.swing.*;
  * Game of Life starter code. Demonstrates how to create and populate the game using the GridWorld framework.
  * Also demonstrates how to provide accessor methods to make the class testable by unit tests.
  * 
- * @author @gcschmit
- * @version 18 July 2014
+ * @author Alex Anderson
+ * @version November 17, 2015
  */
 public class GameOfLife
 {
@@ -23,7 +23,7 @@ public class GameOfLife
     private int ROWS = 30;
     private int COLS = 30;
     
-    ArrayList<Thread> threads = new ArrayList<Thread>();
+    private ArrayList<Thread> threads = new ArrayList<Thread>();
     
     private int x=0;
     private ArrayList<Location> actors = new ArrayList<Location>();
@@ -107,7 +107,7 @@ public class GameOfLife
      * @post    the world has been populated with a new grid containing the next generation
      * 
      */
-    protected void createNextGeneration()
+    void createNextGeneration()
     {
         /** You will need to read the documentation for the World, Grid, and Location classes
          *      in order to implement the Game of Life algorithm and leverage the GridWorld framework.
@@ -186,15 +186,20 @@ public class GameOfLife
     public static void main(String[] args)
     {
         if(args.length == 0){
-            int rows = Integer.parseInt(JOptionPane.showInputDialog(null, "How many rows high should the grid be?"));
-            int cols = Integer.parseInt(JOptionPane.showInputDialog(null, "How many columns wide should the grid be?"));
-            GameOfLife game = new GameOfLife(rows, cols);
+            try{
+                int rows = Integer.parseInt(JOptionPane.showInputDialog(null, "How many rows high should the grid be?"));
+                int cols = Integer.parseInt(JOptionPane.showInputDialog(null, "How many columns wide should the grid be?"));
+                GameOfLife game = new GameOfLife(rows, cols);
+            } catch(java.lang.NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "That's not a number!");
+            }
+                
         } else if(args.length == 2){
             int rows = Integer.parseInt(args[0]);
             int cols = Integer.parseInt(args[1]);
             GameOfLife game = new GameOfLife(rows, cols);
         } else{
-            JOptionPane.showInputDialog(null, "Invalid argument count!");
+            JOptionPane.showMessageDialog(null, "Invalid argument count!");
         }
     }
 

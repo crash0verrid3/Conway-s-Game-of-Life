@@ -1,0 +1,7 @@
+	Requirements:
+
+- The Game of Life program will need to graphically represent lifeforms in a GridWorld GUI window
+- The Game of Life program will use a BoundedGrid object of user-specified dimensions, either by command-line arguments or by inputting into a GUI
+- The Game of Life program will accurately determine which cells live and die after each iteration
+- The Game of Life program will have a test class for verifying that each generation of cells is produces correctly
+- The Game of Life program will allow user interaction using buttons to start, stop, and step forward the generation swithing algorithm
