@@ -1,9 +1,12 @@
 import info.gridworld.actor.Actor;
 import info.gridworld.actor.ActorWorld;
 import info.gridworld.actor.Rock;
-import info.gridworld.grid.Grid;
-import info.gridworld.grid.BoundedGrid;
-import info.gridworld.grid.Location;
+import info.gridworld.grid.*;
+//import info.gridworld.grid.Grid;
+//import info.gridworld.grid.Location;
+import java.lang.Thread;
+import java.util.ArrayList;
+import javax.swing.*;
 
 /**
  * Game of Life starter code. Demonstrates how to create and populate the game using the GridWorld framework.
@@ -17,9 +20,13 @@ public class GameOfLife
     // the world comprised of the grid that displays the graphics for the game
     private ActorWorld world;
     
-    // the game board will have 5 rows and 5 columns
-    private final int ROWS = 5;
-    private final int COLS = 5;
+    private int ROWS = 30;
+    private int COLS = 30;
+    
+    ArrayList<Thread> threads = new ArrayList<Thread>();
+    
+    private int x=0;
+    private ArrayList<Location> actors = new ArrayList<Location>();
     
     /**
      * Default constructor for objects of class GameOfLife
@@ -29,18 +36,32 @@ public class GameOfLife
      */
     public GameOfLife()
     {
+        construct();
+        
+    }
+    public GameOfLife(int rows, int cols)
+    {
+        // create the grid, of the specified size, that contains Actors
+        ROWS = rows;
+        COLS = cols;
+        construct();
+    }
+    private void construct(){
         // create the grid, of the specified size, that contains Actors
         BoundedGrid<Actor> grid = new BoundedGrid<Actor>(ROWS, COLS);
         
         // create a world based on the grid
-        world = new ActorWorld(grid);
+        world = new ActorWorld(grid){
+            public void step(){
+                createNextGeneration();
+            }
+        };
         
         // populate the game
         populateGame();
         
         // display the newly constructed and populated world
         world.show();
-        
     }
     
     /**
@@ -65,14 +86,17 @@ public class GameOfLife
         Rock rock1 = new Rock();
         Location loc1 = new Location(Y1, X1);
         grid.put(loc1, rock1);
+        actors.add(loc1);
         
         Rock rock2 = new Rock();
         Location loc2 = new Location(Y2, X2);
         grid.put(loc2, rock2);
+        actors.add(loc2);
         
         Rock rock3 = new Rock();
         Location loc3 = new Location(Y3, X3);
         grid.put(loc3, rock3);
+        actors.add(loc3);
     }
 
     /**
@@ -83,7 +107,7 @@ public class GameOfLife
      * @post    the world has been populated with a new grid containing the next generation
      * 
      */
-    private void createNextGeneration()
+    protected void createNextGeneration()
     {
         /** You will need to read the documentation for the World, Grid, and Location classes
          *      in order to implement the Game of Life algorithm and leverage the GridWorld framework.
@@ -91,9 +115,32 @@ public class GameOfLife
         
         // create the grid, of the specified size, that contains Actors
         Grid<Actor> grid = world.getGrid();
+        int rows = getNumRows();
+        int cols = getNumCols();
+        
+        actors.clear();
         
         // insert magic here...
-        
+        Grid<Actor> grid2 = new BoundedGrid<Actor>(rows, cols);
+        for(int col=0; col<cols; col++){
+            for(int row=0; row<rows; row++){
+                Location cpos = new Location(row, col);
+                int nC = grid.getNeighbors(cpos).size();
+                Actor ac = grid.get(cpos);
+                if(ac != null){
+                    if(nC >= 2 && nC <= 3){
+                        grid2.put(cpos, ac);
+                        actors.add(cpos);
+                    }
+                } else{
+                    if(nC == 3){
+                        grid2.put(cpos, new Rock());
+                        actors.add(cpos);
+                    }
+                }
+            }
+        }
+        world.setGrid(grid2);
     }
     
     /**
@@ -118,7 +165,7 @@ public class GameOfLife
      */
     public int getNumRows()
     {
-        return ROWS;
+        return world.getGrid().getNumRows();
     }
     
     /**
@@ -128,7 +175,7 @@ public class GameOfLife
      */
     public int getNumCols()
     {
-        return COLS;
+        return world.getGrid().getNumCols();
     }
     
     
@@ -138,7 +185,17 @@ public class GameOfLife
      */
     public static void main(String[] args)
     {
-        GameOfLife game = new GameOfLife();
+        if(args.length == 0){
+            int rows = Integer.parseInt(JOptionPane.showInputDialog(null, "How many rows high should the grid be?"));
+            int cols = Integer.parseInt(JOptionPane.showInputDialog(null, "How many columns wide should the grid be?"));
+            GameOfLife game = new GameOfLife(rows, cols);
+        } else if(args.length == 2){
+            int rows = Integer.parseInt(args[0]);
+            int cols = Integer.parseInt(args[1]);
+            GameOfLife game = new GameOfLife(rows, cols);
+        } else{
+            JOptionPane.showInputDialog(null, "Invalid argument count!");
+        }
     }
 
 }
