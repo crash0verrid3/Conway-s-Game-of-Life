@@ -48,7 +48,13 @@ public class GameOfLife
     }
     private void construct(){
         // create the grid, of the specified size, that contains Actors
-        BoundedGrid<Actor> grid = new BoundedGrid<Actor>(ROWS, COLS);
+        BoundedGrid<Actor> grid = null;
+        try{
+            grid = new BoundedGrid<Actor>(ROWS, COLS);
+        } catch(IllegalArgumentException e){
+            JOptionPane.showMessageDialog(null, "You cannot have a world of size zero!");
+            return;
+        }
         
         // create a world based on the grid
         world = new ActorWorld(grid){
@@ -58,7 +64,11 @@ public class GameOfLife
         };
         
         // populate the game
-        populateGame();
+        try{
+            populateGame();
+        } catch(java.lang.IllegalArgumentException e){
+            // Ignore
+        }
         
         // display the newly constructed and populated world
         world.show();
@@ -71,10 +81,10 @@ public class GameOfLife
      * @post    all actors that comprise the initial state of the game have been added to the grid
      * 
      */
-    private void populateGame()
+    void populateGame() throws java.lang.IllegalArgumentException
     {
         // constants for the location of the three cells initially alive
-        final int X1 = 2, Y1 = 0;
+        final int X1 = 0, Y1 = 0;
         final int X2 = 0, Y2 = 2;
         final int X3 = 1, Y3 = 2;
 
@@ -85,17 +95,17 @@ public class GameOfLife
         // create and add rocks (a type of Actor) to the three intial locations
         Rock rock1 = new Rock();
         Location loc1 = new Location(Y1, X1);
-        grid.put(loc1, rock1);
+        rock1.putSelfInGrid(grid, loc1);
         actors.add(loc1);
         
         Rock rock2 = new Rock();
         Location loc2 = new Location(Y2, X2);
-        grid.put(loc2, rock2);
+        rock2.putSelfInGrid(grid, loc2);
         actors.add(loc2);
         
         Rock rock3 = new Rock();
         Location loc3 = new Location(Y3, X3);
-        grid.put(loc3, rock3);
+        rock3.putSelfInGrid(grid, loc3);
         actors.add(loc3);
     }
 
@@ -129,12 +139,12 @@ public class GameOfLife
                 Actor ac = grid.get(cpos);
                 if(ac != null){
                     if(nC >= 2 && nC <= 3){
-                        grid2.put(cpos, ac);
+                        ac.putSelfInGrid(grid2, cpos);
                         actors.add(cpos);
                     }
                 } else{
                     if(nC == 3){
-                        grid2.put(cpos, new Rock());
+                        (new Rock()).putSelfInGrid(grid2, cpos);
                         actors.add(cpos);
                     }
                 }
