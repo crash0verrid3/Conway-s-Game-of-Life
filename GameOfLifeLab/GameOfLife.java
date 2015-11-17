@@ -4,9 +4,9 @@ import info.gridworld.actor.Rock;
 import info.gridworld.grid.*;
 //import info.gridworld.grid.Grid;
 //import info.gridworld.grid.Location;
-import java.lang.Thread;
 import java.util.ArrayList;
 import javax.swing.*;
+import java.lang.*;
 
 /**
  * Game of Life starter code. Demonstrates how to create and populate the game using the GridWorld framework.
@@ -26,7 +26,7 @@ public class GameOfLife
     private ArrayList<Thread> threads = new ArrayList<Thread>();
     
     private int x=0;
-    private ArrayList<Location> actors = new ArrayList<Location>();
+    private ArrayList<Object[]> actors = new ArrayList<Object[]>();
     
     /**
      * Default constructor for objects of class GameOfLife
@@ -66,7 +66,7 @@ public class GameOfLife
         // populate the game
         try{
             populateGame();
-        } catch(java.lang.IllegalArgumentException e){
+        } catch(IllegalArgumentException e){
             // Ignore
         }
         
@@ -81,7 +81,7 @@ public class GameOfLife
      * @post    all actors that comprise the initial state of the game have been added to the grid
      * 
      */
-    void populateGame() throws java.lang.IllegalArgumentException
+    void populateGame() throws IllegalArgumentException
     {
         // constants for the location of the three cells initially alive
         final int X1 = 0, Y1 = 0;
@@ -96,17 +96,17 @@ public class GameOfLife
         Rock rock1 = new Rock();
         Location loc1 = new Location(Y1, X1);
         rock1.putSelfInGrid(grid, loc1);
-        actors.add(loc1);
+        actors.add(new Object[]{rock1, loc1});
         
         Rock rock2 = new Rock();
         Location loc2 = new Location(Y2, X2);
         rock2.putSelfInGrid(grid, loc2);
-        actors.add(loc2);
+        actors.add(new Object[]{rock2, loc2});
         
         Rock rock3 = new Rock();
         Location loc3 = new Location(Y3, X3);
         rock3.putSelfInGrid(grid, loc3);
-        actors.add(loc3);
+        actors.add(new Object[]{rock3, loc3});
     }
 
     /**
@@ -139,16 +139,25 @@ public class GameOfLife
                 Actor ac = grid.get(cpos);
                 if(ac != null){
                     if(nC >= 2 && nC <= 3){
-                        ac.putSelfInGrid(grid2, cpos);
-                        actors.add(cpos);
+                        actors.add(new Object[]{ac, cpos});
                     }
                 } else{
                     if(nC == 3){
-                        (new Rock()).putSelfInGrid(grid2, cpos);
-                        actors.add(cpos);
+                        actors.add(new Object[]{new Rock(), cpos});
                     }
                 }
             }
+        }
+        
+        for(Object[] obja : actors){
+            Actor actor = (Actor)obja[0];
+            Location loc = (Location)obja[1];
+            try{
+                actor.removeSelfFromGrid();
+            } catch(IllegalStateException e){
+                // Ignore
+            }
+            actor.putSelfInGrid(grid2, loc);
         }
         world.setGrid(grid2);
     }
@@ -200,7 +209,7 @@ public class GameOfLife
                 int rows = Integer.parseInt(JOptionPane.showInputDialog(null, "How many rows high should the grid be?"));
                 int cols = Integer.parseInt(JOptionPane.showInputDialog(null, "How many columns wide should the grid be?"));
                 GameOfLife game = new GameOfLife(rows, cols);
-            } catch(java.lang.NumberFormatException e){
+            } catch(NumberFormatException e){
                 JOptionPane.showMessageDialog(null, "That's not a number!");
             }
                 
