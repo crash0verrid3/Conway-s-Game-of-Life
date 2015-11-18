@@ -247,6 +247,8 @@ public class GameOfLife
             int rows = Integer.parseInt(args[0]);
             int cols = Integer.parseInt(args[1]);
             GameOfLife game = new GameOfLife(rows, cols);
+        } else if(args.length == 1 && (args[0].equals("infinite") || args[0].equals("inf") || args[0].equals("unbounded"))){
+            GameOfLife game = new GameOfLife();
         } else{
             JOptionPane.showMessageDialog(null, "Invalid argument count!");
         }
