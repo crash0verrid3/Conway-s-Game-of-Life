@@ -1,4 +1,4 @@
-Unit 3: Decisions and Loops - *Conway's Game of Life*
+Unit 3: Decisions and Loops
 ============
 
 *Standard 4 - Understand decision and looping structures and apply to programs*
