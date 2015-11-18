@@ -124,6 +124,8 @@ public class GameOfLife
          *      in order to implement the Game of Life algorithm and leverage the GridWorld framework.
          */
         
+        grid = world.getGrid();
+        
         // create the grid, of the specified size, that contains Actors
         int rows = getNumRows();
         int cols = getNumCols();
