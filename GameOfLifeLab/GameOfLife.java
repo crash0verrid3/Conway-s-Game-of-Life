@@ -108,6 +108,7 @@ public class GameOfLife
         Rock rock3 = new Rock();
         Location loc3 = new Location(Y3, X3);
         rock3.putSelfInGrid(grid, loc3);
+        
     }
 
     /**
